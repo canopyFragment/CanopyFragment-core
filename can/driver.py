@@ -3,8 +3,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from core.websites import Website
-from core.articles import Article
+from .core.websites import Website
+from .core.articles import Article
 
 
 class Korben(Website):
