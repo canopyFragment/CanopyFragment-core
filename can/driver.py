@@ -28,6 +28,14 @@ class Korben(Website):
         )
 
 
+def driver_factory(driver_name: str):
+    mapper = dict(
+        korben=Korben,
+    )
+
+    return mapper[driver_name]()
+
+
 if __name__ == "__main__":
     korben = Korben()
     print(korben.fetch_last_article())
