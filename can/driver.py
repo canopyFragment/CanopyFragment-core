@@ -3,8 +3,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from .core.websites import Website
-from .core.articles import Article
+from can.core.websites import Website
+from can.core.articles import Article
 
 
 class Korben(Website):
@@ -20,11 +20,16 @@ class Korben(Website):
         article = soup.find("article")
         h2 = article.find("h2")
 
+        # Find the first link after the title and fetch the href from it
+        link = h2.find_next("a")
+        url = link.get("href")
+
         return Article(
             self,
             h2.text,
             "Korben",
-            datetime.now().date()
+            datetime.now().date(),
+            url,
         )
 
 
@@ -38,4 +43,6 @@ def driver_factory(driver_name: str):
 
 if __name__ == "__main__":
     korben = Korben()
-    print(korben.fetch_last_article())
+    art = korben.fetch_last_article()
+    print(art)
+    print(art.url)
