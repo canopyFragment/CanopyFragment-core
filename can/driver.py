@@ -62,6 +62,41 @@ class Zero1Net(Website):
             datetime.now().date(),
             url,
         )
+
+
+class GenerationNT(Website):
+    def __init__(self):
+        self.name = "generation-nt"
+        self.url = "https://www.generation-nt.com/actualites"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Find the div that have for id "body-content"
+        body = soup.find("div", id="body-content")
+
+        # Find the first article tag that is inside the second section of the page
+        section = body.find_all("section")[1]
+        article = section.find("article")
+
+        # Fetch the first link inside the article and get the href and the text
+        link = article.find_all("a")[1]
+        url = link.get("href")
+        title = link.text
+
+        # The link is relative, so we need to add the base url
+        article_link = url.split("/")[-1]
+        url = f"{self.url}/{article_link}"
+        
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
         
 
 
@@ -69,13 +104,14 @@ def driver_factory(driver_name: str):
     mapper = dict(
         korben=Korben,
         zero1net=Zero1Net,
+        generation_nt=GenerationNT,
     )
 
     return mapper[driver_name]()
 
 
 if __name__ == "__main__":
-    website = driver_factory("zero1net")
+    website = driver_factory("generation_nt")
     art = website.fetch_last_article()
     print(art)
     print(art.url)
