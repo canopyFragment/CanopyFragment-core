@@ -99,19 +99,53 @@ class GenerationNT(Website):
         )
         
 
+class LesNumeriques(Website):
+    def __init__(self):
+        self.name = "lesnumeriques"
+        self.url = "https://www.lesnumeriques.com/"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Find the first section, then the div with id="hot-news"
+        section = soup.find("section")
+        div = section.find("div", id="hot-news")
+
+        # Inside this div, with fetch the first line of the list 
+        ul = div.find_all("ul")[1]
+        li = ul.find("li")
+        article = li.find("article")
+
+        url = article.find("a").get("href")
+        title = article.find("h3").text
+
+        article_link = url.split("/")[-1]
+        url = f"{self.url}/{article_link}"
+
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
+
 
 def driver_factory(driver_name: str):
     mapper = dict(
         korben=Korben,
         zero1net=Zero1Net,
         generation_nt=GenerationNT,
+        lesnumeriques=LesNumeriques,
     )
 
     return mapper[driver_name]()
 
 
 if __name__ == "__main__":
-    website = driver_factory("generation_nt")
+    website = driver_factory("lesnumeriques")
     art = website.fetch_last_article()
     print(art)
     print(art.url)
