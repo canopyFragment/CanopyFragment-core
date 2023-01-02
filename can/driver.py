@@ -133,19 +133,55 @@ class LesNumeriques(Website):
         )
 
 
+class Developpez(Website):
+    def __init__(self):
+        self.name = "developpez"
+        self.url = "https://www.developpez.com/"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Find the first div with the class "colonneActu"
+        div = soup.find("div", class_="colonneActu")
+
+        # Find the first article inside that div
+        article = div.find("article")
+
+        # Find the first link
+        link = article.find("a")
+        url = link.get("href")
+        title = link.text
+
+        article_link = url
+        url = f"{self.url}/{article_link}"
+
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
+
+
+
+
 def driver_factory(driver_name: str):
     mapper = dict(
         korben=Korben,
         zero1net=Zero1Net,
         generation_nt=GenerationNT,
         lesnumeriques=LesNumeriques,
+        developpez=Developpez,
     )
 
     return mapper[driver_name]()
 
 
 if __name__ == "__main__":
-    website = driver_factory("lesnumeriques")
+    website = driver_factory("developpez")
     art = website.fetch_last_article()
     print(art)
     print(art.url)
