@@ -166,6 +166,39 @@ class Developpez(Website):
         )
 
 
+class Clubic(Website):
+    def __init__(self):
+        self.name = "clubic"
+        self.url = "https://www.clubic.com/"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Get the div with the id "infos-flux-home"
+        div = soup.find("div", id="infos-flux-home")
+
+        # Get the first div with the class "posts"
+        posts = div.find("div", class_="posts")
+
+        # Get the first link
+        link = posts.find("a")
+        url = link.get("href")
+        title = link.text
+
+        article_link = url
+        url = f"{self.url}/{article_link}"
+
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
+
+
 
 
 def driver_factory(driver_name: str):
@@ -175,6 +208,7 @@ def driver_factory(driver_name: str):
         generation_nt=GenerationNT,
         lesnumeriques=LesNumeriques,
         developpez=Developpez,
+        clubic=Clubic,
     )
 
     return mapper[driver_name]()
