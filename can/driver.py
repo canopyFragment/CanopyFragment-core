@@ -227,6 +227,36 @@ class Numerama(Website):
         )
 
 
+class NextImpact(Website):
+    def __init__(self):
+        self.name = "nextimpact"
+        self.url = "https://www.nextinpact.com/"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Find the first tag "app-home-item"
+        app = soup.find("app-home-item")
+
+        # Find the second link
+        link = app.find_all("a")[1]
+        url = link.get("href")
+        title = link.text
+
+        article_link = url
+        url = f"{self.url}{article_link[1:]}"
+
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
+
+
 def driver_factory(driver_name: str):
     mapper = dict(
         korben=Korben,
@@ -234,15 +264,17 @@ def driver_factory(driver_name: str):
         generation_nt=GenerationNT,
         lesnumeriques=LesNumeriques,
         developpez=Developpez,
+        
         clubic=Clubic,
         numerama=Numerama,
+        nextimpact=NextImpact,
     )
 
     return mapper[driver_name]()
 
 
 if __name__ == "__main__":
-    website = driver_factory("numerama")
+    website = driver_factory("nextimpact")
     art = website.fetch_last_article()
     print(art)
     print(art.url)
