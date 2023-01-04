@@ -199,6 +199,32 @@ class Clubic(Website):
         )
 
 
+class Numerama(Website):
+    def __init__(self):
+        self.name="numerama"
+        self.url = "https://www.numerama.com/"
+        self.category = "tech"
+
+    def fetch_last_article(self):
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Find the first main tag followed by the first h2
+        main = soup.find("main")
+        h2 = main.find("h2")
+
+        # GEt the first link
+        link = h2.find("a")
+        url = link.get("href")
+        title = link.text
+
+        return Article(
+            self,
+            title,
+            "NaN",
+            datetime.now().date(),
+            url,
+        )
 
 
 def driver_factory(driver_name: str):
@@ -209,13 +235,14 @@ def driver_factory(driver_name: str):
         lesnumeriques=LesNumeriques,
         developpez=Developpez,
         clubic=Clubic,
+        numerama=Numerama,
     )
 
     return mapper[driver_name]()
 
 
 if __name__ == "__main__":
-    website = driver_factory("developpez")
+    website = driver_factory("numerama")
     art = website.fetch_last_article()
     print(art)
     print(art.url)
